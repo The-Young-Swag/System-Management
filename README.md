@@ -2,9 +2,9 @@
 # 🛡️ System-Management (RBAC Auth System)
 
 ![GitHub license](https://img.shields.io/badge/license-MIT-blue.svg)
-![Node.js](https://img.shields.io/badge/Node.js-18.x-green)
-![React](https://img.shields.io/badge/React-18.x-61DAFB)
-![MySQL](https://img.shields.io/badge/MySQL-8.x-4479A1)
+![Node.js](https://img.shields.io/badge/Node.js-24.x-green)
+![React](https://img.shields.io/badge/React-19.x-61DAFB)
+![MySQL](https://img.shields.io/badge/MySQL-8.4.x-4479A1)
 
 An enterprise-grade **Role-Based Access Control (RBAC)** authentication system designed for scalability. This foundation dynamically manages users, roles, and menu permissions without requiring frontend redeploys.
 
