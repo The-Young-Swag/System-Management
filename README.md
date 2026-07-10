@@ -17,7 +17,7 @@ An enterprise-grade **Role-Based Access Control (RBAC)** authentication system d
 - **🔐 JWT Authentication** – Secure HttpOnly cookies with access/refresh token rotation.
 - **🧩 Dynamic RBAC** – Menus are rendered based on the `PrivilegeManagement` matrix in real-time.
 - **🔄 Auto-Assign Logic** – Creating a new Menu/Role automatically propagates permissions across the entire system.
-- **🗑️ Soft Deletes** – All critical tables support `is_deleted` flags for full audit trails.
+- **🗑️ Soft Deletes** – Core entity tables (`MenuManagement`, `RoleManagement`, `UserManagement`) support `is_deleted` flags for full audit trails; `PrivilegeManagement` uses `is_active` toggles since it's a junction table.
 - **⚡ Optimized Queries** – Composite indexes and foreign key constraints ensure data integrity.
 - **📊 MySQL Transactions** – Ensures atomicity during permission propagation.
 
