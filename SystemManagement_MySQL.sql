@@ -62,7 +62,21 @@ CREATE TABLE
         CONSTRAINT fk_user_role FOREIGN KEY (role_id) REFERENCES RoleManagement (role_id) ON DELETE RESTRICT ON UPDATE CASCADE
     );
 
--- 5. PERFORMANCE INDEXES
+CREATE TABLE
+    RefreshTokenManagement (
+        token_id INT AUTO_INCREMENT PRIMARY KEY,
+        user_id INT NOT NULL,
+        token_hash VARCHAR(255) NOT NULL, -- SHA-256 hash of random token
+        expires_at TIMESTAMP NOT NULL,
+        revoked_at TIMESTAMP NULL, -- NULL = active, set on logout/rotation
+        created_at TIMESTAMP NOT NULL DEFAULT CURRENT_TIMESTAMP,
+        CONSTRAINT fk_refresh_user FOREIGN KEY (user_id) REFERENCES UserManagement (user_id) ON DELETE CASCADE ON UPDATE CASCADE,
+        CONSTRAINT unique_token_hash UNIQUE (token_hash)
+    );
+
+CREATE INDEX idx_refresh_lookup ON RefreshTokenManagement (user_id, revoked_at);
+
+-- PERFORMANCE INDEXES
 -- Speeds up JOIN and WHERE lookups on frequently filtered columns
 CREATE INDEX idx_menu_active ON MenuManagement (is_active, is_deleted);
 
