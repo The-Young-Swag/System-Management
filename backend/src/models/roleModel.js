@@ -11,7 +11,9 @@ export const findRoleById = async (roleId) => {
       role,
       role_code,
       is_active,
-      is_deleted
+      is_deleted,
+      created_at,
+      updated_at
     FROM RoleManagement
     WHERE role_id = ?
       AND is_deleted = FALSE
@@ -29,7 +31,9 @@ export const findRoleByCode = async (roleCode) => {
       role,
       role_code,
       is_active,
-      is_deleted
+      is_deleted,
+      created_at,
+      updated_at
     FROM RoleManagement
     WHERE role_code = ?
       AND is_deleted = FALSE
@@ -47,7 +51,9 @@ export const getAllRoles = async () => {
       role,
       role_code,
       is_active,
-      created_at
+      is_deleted,
+      created_at,
+      updated_at
     FROM RoleManagement
     WHERE is_deleted = FALSE
     ORDER BY role_id ASC
