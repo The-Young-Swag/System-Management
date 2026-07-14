@@ -3,6 +3,28 @@
 
 import pool from '../config/db.js';
 
+export const findUserById = async (id) => {
+    const sql = `
+    SELECT 
+      user_id,
+      name,
+      user_name,
+      email,
+      password,
+      role_id,
+      is_active,
+      is_deleted,
+      created_at,
+      updated_at
+    FROM UserManagement
+    WHERE user_id = ?
+      AND is_deleted = FALSE
+  `;
+
+  const [rows] = await pool.query(sql, [id]);
+  return rows.length > 0 ? rows[0] : null;
+};
+
 // Find user by email address
 // Uses parameterized query to prevent SQL injection
 // Excludes soft-deleted users (is_deleted = FALSE)
@@ -105,11 +127,11 @@ export const createUser = async (userData) => {
     false,
   ]);
 
-  return findUserByIdentifier(email);
+  return findUserById(result.insertId);
 };
 
 // Update user's last activity timestamp
-export const updateLastLogin = async (userId) => {
+export const updateUserTimestamp = async (userId) => {
   const sql = `
     UPDATE UserManagement
     SET updated_at = NOW()
