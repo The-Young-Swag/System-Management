@@ -60,16 +60,37 @@ CREATE TABLE UserManagement (
     updated_at TIMESTAMPTZ NOT NULL DEFAULT NOW()
 );
 
--- 5. PERFORMANCE INDEXES
+-- 5. REFRESH TOKEN MANAGEMENT
+-- Tracks issued refresh tokens for session control and revocation.
+-- token is a random string (crypto.randomBytes), hashed with SHA-256 before storage —
+-- NOT bcrypt/bcryptjs, since the token is already high-entropy and doesn't need
+-- slow, brute-force-resistant hashing the way human passwords do.
+CREATE TABLE RefreshTokenManagement (
+    token_id INTEGER GENERATED ALWAYS AS IDENTITY PRIMARY KEY,
+    user_id INTEGER NOT NULL REFERENCES UserManagement(user_id)
+    ON DELETE CASCADE ON UPDATE CASCADE,
+    token_hash VARCHAR(255) NOT NULL,   -- SHA-256 hash of random token
+    expires_at TIMESTAMPTZ NOT NULL,
+    revoked_at TIMESTAMPTZ NULL,        -- NULL = active, set on logout/rotation
+    created_at TIMESTAMPTZ NOT NULL DEFAULT NOW(),
+
+    CONSTRAINT unique_token_hash UNIQUE (token_hash)
+);
+
+-- 6. PERFORMANCE INDEXES
 -- Speeds up JOIN and WHERE lookups on frequently filtered columns
 CREATE INDEX idx_menu_active ON MenuManagement (is_active, is_deleted);
 CREATE INDEX idx_role_active ON RoleManagement (is_active, is_deleted);
 CREATE INDEX idx_user_role ON UserManagement (role_id);
-CREATE INDEX idx_privilege_lookup  ON PrivilegeManagement (role_id, menu_id, is_active);
+CREATE INDEX idx_privilege_lookup ON PrivilegeManagement (role_id, menu_id, is_active);
+CREATE INDEX idx_refresh_lookup ON RefreshTokenManagement (user_id, revoked_at);
 
--- 6. AUTO-UPDATE updated_at ON ROW MODIFICATION
+-- 7. AUTO-UPDATE updated_at ON ROW MODIFICATION
 -- Postgres has no built-in "ON UPDATE CURRENT_TIMESTAMP" clause
 -- (unlike MySQL), so this is done via a trigger function.
+-- Note: RefreshTokenManagement has no updated_at column — its rows are
+-- either inserted once or their revoked_at is set; there's no general
+-- "last modified" concept worth tracking there, so no trigger applies.
 CREATE OR REPLACE FUNCTION set_updated_at()
 RETURNS TRIGGER AS $$
 BEGIN
