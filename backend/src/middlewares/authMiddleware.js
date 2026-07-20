@@ -5,21 +5,7 @@
 
 import { verifyAccessToken } from '../utils/jwt.js';
 
-/**
- * Authentication middleware
- * Verifies JWT from cookie and attaches user data to req.user
- * 
- * @param {Object} req - Express request object
- * @param {Object} res - Express response object
- * @param {Function} next - Express next function
- * 
- * Behavior:
- * - Token found & valid → req.user = payload, call next()
- * - Token missing → 401 Unauthorized
- * - Token invalid/expired → 401 Unauthorized
- * 
- * Used in routes that require authentication (most protected endpoints)
- */
+
 export const authMiddleware = async (req, res, next) => {
   try {
     // Extract token from HttpOnly cookie
